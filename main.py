@@ -1,12 +1,11 @@
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
 import os
-import openai
+import requests
 
-client = openai.OpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key=os.getenv("ROUTER_API_KEY"),
-)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
+
 app = FastAPI()
 
 class InputText(BaseModel):
@@ -23,14 +22,27 @@ def classify_emotion(input: InputText, x_api_key: str = Header(...)):
     Responda com apenas uma das seguintes palavras em letra minuscula: alegria, tristeza, raiva, medo, nojo, neutro.
     """
 
-    response = client.chat.completions.create(
-        model="google/gemini-2.0-flash-exp:free",
-        messages=[
+    payload = {
+        "contents": [
             {
-             "role": "user",
-             "content": f"{prompt}"
+                "parts": [
+                    {"text": prompt}
+                ]
             }
         ]
-    )
-    emotion = response.choices[0].message.content.strip().lower()
-    return {"emotion": emotion}
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(GEMINI_URL, headers=headers, json=payload)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail=f"Gemini error: {response.text}")
+
+    try:
+        emotion = response.json()["candidates"][0]["content"]["parts"][0]["text"].strip().lower()
+        return {"emotion": emotion}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Invalid Gemini response: {e}")
