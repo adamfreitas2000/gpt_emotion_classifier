@@ -2,7 +2,7 @@
 
 API para classificar emoções em frases de texto em português, usando GPT-3.5 da OpenAI.
 
-## ✨ Como usar
+## Como usar
 
 ### Enviar requisição:
 POST `/classify`
