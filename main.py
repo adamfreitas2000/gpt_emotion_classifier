@@ -3,9 +3,10 @@ from pydantic import BaseModel
 import os
 import openai
 
-# Configuração do cliente OpenAI moderno
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
+client = openai.OpenAI(
+  base_url="https://openrouter.ai/api/v1",
+  api_key=os.getenv("ROUTER_API_KEY"),
+)
 app = FastAPI()
 
 class InputText(BaseModel):
@@ -19,14 +20,14 @@ def classify_emotion(input: InputText, x_api_key: str = Header(...)):
     prompt = f"""
     Classifique a emoção dominante neste texto em português:
     Texto: "{input.text}"
-    Responda com apenas uma das seguintes palavras: alegria, tristeza, raiva, medo, nojo, surpresa ou neutro.
+    Responda com apenas uma das seguintes palavras em letra minuscula: alegria, tristeza, raiva, medo, nojo, neutro.
     """
 
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0
+        model="google/gemini-2.0-flash-exp:free",
+        messages=[
+            {f"{prompt}"}
+        ]
     )
-
     emotion = response.choices[0].message.content.strip().lower()
     return {"emotion": emotion}
