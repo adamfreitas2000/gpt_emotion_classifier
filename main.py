@@ -26,7 +26,10 @@ def classify_emotion(input: InputText, x_api_key: str = Header(...)):
     response = client.chat.completions.create(
         model="google/gemini-2.0-flash-exp:free",
         messages=[
-            {f"{prompt}"}
+            {
+             "role": "user",
+             "content": f"{prompt}"
+            }
         ]
     )
     emotion = response.choices[0].message.content.strip().lower()
