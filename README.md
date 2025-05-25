@@ -1,6 +1,6 @@
-# Emotion Classifier API (via OpenAI)
+# Emotion Classifier API (via Gemini)
 
-API para classificar emoções em frases de texto em português, usando GPT-3.5 da OpenAI.
+API para classificar emoções em frases de texto em português, usando Gemma 3n E4B da OpenAI.
 
 ## Como usar
 
@@ -9,7 +9,7 @@ POST `/classify`
 
 ### Headers:
 - `Content-Type: application/json`
-- `x-api-key: seu_token_definido`
+- `x-api-key: token`
 
 ### Body:
 ```json
