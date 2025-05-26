@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Header
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 import requests
@@ -7,6 +8,14 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemma-3n-e4b-it:generateContent?key={GEMINI_API_KEY}"
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # ou especifique ["https://seu-frontend.vercel.app"]
+    allow_credentials=True,
+    allow_methods=["*"],  # ou ["POST", "OPTIONS"]
+    allow_headers=["*"],  # ou ["Content-Type", "x-api-key"]
+)
 
 class InputText(BaseModel):
     text: str
