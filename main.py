@@ -46,3 +46,8 @@ def classify_emotion(input: InputText, x_api_key: str = Header(...)):
         return {"emotion": emotion}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Invalid Gemini response: {e}")
+    
+@app.get("/health")
+def health_check():
+    return {"status": "online"}
+
